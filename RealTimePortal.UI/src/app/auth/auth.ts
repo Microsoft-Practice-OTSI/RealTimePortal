@@ -64,6 +64,24 @@ export class Auth {
     );
   }
 
+  getCurrentUserId(): number | null {
+  const claims = this.getTokenClaims();
+
+  const userId =
+    claims['sub'] ??
+    claims['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+
+  if (userId === undefined || userId === null) {
+    return null;
+  }
+
+  const parsedUserId = Number(userId);
+
+  return Number.isFinite(parsedUserId)
+    ? parsedUserId
+    : null;
+}
+
   clearToken(): void {
     localStorage.removeItem(
       this.tokenKey

@@ -7,7 +7,7 @@ import { Processes } from './processes/processes';
 import { ProcessDetail } from './process-detail/process-detail';
 
 import { authGuard } from './auth/auth-guard';
-
+import { Chat } from './chat/chat';
 export const routes: Routes = [
 
   {
@@ -46,8 +46,12 @@ export const routes: Routes = [
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full'
-      }
-
+      },
+      
+       {
+      path: 'chat',
+      component: Chat
+    }
     ]
   },
 

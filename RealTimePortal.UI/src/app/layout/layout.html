@@ -172,27 +172,27 @@
       </div>
 
 
-      <div class="nav-item disabled-nav">
+  <a   routerLink="/chat"
+  routerLinkActive="active"
+  class="nav-item">
 
-        <span class="nav-icon cyan">
-          <mat-icon>
-            chat_bubble
-          </mat-icon>
+      <span class="nav-icon cyan">
+
+        <mat-icon>
+          chat_bubble
+        </mat-icon>
+
+      </span>
+
+      @if (!sidebarCollapsed()) {
+
+        <span class="nav-label">
+          Chat
         </span>
 
-        @if (!sidebarCollapsed()) {
+      }
 
-          <span class="nav-label">
-            Chat
-          </span>
-
-          <span class="coming-soon">
-            Soon
-          </span>
-
-        }
-
-      </div>
+</a>
 
 
       <div class="nav-section-title second-section">

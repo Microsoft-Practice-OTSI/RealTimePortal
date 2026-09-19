@@ -1,0 +1,206 @@
+<div class="chat-page">
+
+  <div class="chat-container">
+
+    <!-- LEFT -->
+    <aside class="chat-users">
+
+      <div class="chat-users-header">
+        <div>
+          <h2>Chat</h2>
+          <span>Select a user to start a conversation</span>
+        </div>
+      </div>
+
+      <div class="user-list">
+
+        <!-- @for (user of users(); track user.id) {
+
+          <button
+            type="button"
+            class="chat-user"
+            [class.selected]="
+              selectedUser()?.id === user.id
+            "
+            (click)="selectUser(user)"
+          >
+
+            <div class="user-avatar">
+              {{
+                (user.displayName || user.userName)
+                  .substring(0, 1)
+                  .toUpperCase()
+              }}
+            </div>
+
+            <div class="user-info">
+
+              <strong>
+                {{ user.displayName || user.userName }}
+              </strong>
+
+              <span>
+                {{ user.userName }}
+              </span>
+
+            </div>
+
+          </button>
+
+        } -->
+
+        @for (user of users(); track user.id) {
+        <div
+            class="chat-user"
+            (click)="selectUser(user)">
+
+            <span>
+            {{ user.displayName || user.userName }}
+            </span>
+
+            @if (getUnreadCount(user.id) > 0) {
+            <span class="unread-badge">
+                {{ getUnreadCount(user.id) }}
+            </span>
+            }
+
+        </div>
+        }
+
+        @if (users().length === 0) {
+
+          <div class="empty-users">
+            No users available.
+          </div>
+
+        }
+
+      </div>
+
+    </aside>
+
+    <!-- RIGHT -->
+    <section class="chat-window">
+
+      @if (selectedConversation()) {
+
+        <div class="chat-header">
+
+          <div class="chat-header-avatar">
+            {{
+              getSelectedUserName()
+                .substring(0, 1)
+                .toUpperCase()
+            }}
+          </div>
+
+          <div>
+
+            <strong>
+              {{ getSelectedUserName() }}
+            </strong>
+
+            <span>Private conversation</span>
+
+          </div>
+
+        </div>
+
+        <div class="messages">
+
+          @if (loading()) {
+
+            <div class="empty-chat">
+              Loading messages...
+            </div>
+
+          }
+
+          @if (
+            !loading() &&
+            messages().length === 0
+          ) {
+
+            <div class="empty-chat">
+              No messages yet.
+              Start the conversation.
+            </div>
+
+          }
+
+          @for (
+            message of messages();
+            track message.id
+          ) {
+
+            <div
+              class="message-row"
+              [class.own]="
+                isOwnMessage(message)
+              "
+            >
+
+              <div class="message-bubble">
+
+                <div class="message-text">
+                  {{ message.message }}
+                </div>
+
+                <div class="message-time">
+                  {{ message.sentAt | date:'hh:mm a' }}
+                </div>
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+        <div class="message-input">
+
+          <textarea
+            [ngModel]="messageText()"
+            (ngModelChange)="messageText.set($event)"
+            (keydown)="onMessageKeyDown($event)"
+            placeholder="Type a message..."
+            rows="1"
+          ></textarea>
+
+          <button
+            mat-icon-button
+            type="button"
+            aria-label="Send message"
+            [disabled]="!messageText().trim()"
+            (click)="sendMessage()"
+          >
+            <mat-icon>send</mat-icon>
+          </button>
+
+        </div>
+
+      } @else {
+
+        <div class="chat-empty-state">
+
+          <mat-icon>
+            chat_bubble_outline
+          </mat-icon>
+
+          <h2>Select a user</h2>
+
+          <p>
+            Choose someone from the list
+            to start chatting.
+          </p>
+
+        </div>
+
+      }
+
+    </section>
+
+  </div>
+
+</div>
