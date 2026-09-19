@@ -29,4 +29,8 @@ public interface IChatRepository
         long conversationId,
         long userId,
         CancellationToken cancellationToken = default);
+
+    Task<Conversation?> GetConversationByIdAsync(
+    long conversationId,
+    CancellationToken cancellationToken = default);
 }

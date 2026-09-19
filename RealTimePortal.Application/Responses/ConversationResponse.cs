@@ -9,4 +9,6 @@ public class ConversationResponse
     public DateTime CreatedAt { get; set; }
 
     public List<long> ParticipantUserIds { get; set; } = new();
+
+    public int UnreadMessageCount { get; set; }
 }

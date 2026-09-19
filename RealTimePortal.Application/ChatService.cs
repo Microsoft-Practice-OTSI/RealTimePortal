@@ -58,9 +58,23 @@ public class ChatService
         return MapConversation(conversation);
     }
 
+    //public async Task<List<ConversationResponse>> GetConversationsAsync(
+    //    long userId,
+    //    CancellationToken cancellationToken = default)
+    //{
+    //    var conversations =
+    //        await _chatRepository.GetConversationsAsync(
+    //            userId,
+    //            cancellationToken);
+
+    //    return conversations
+    //        .Select(MapConversation)
+    //        .ToList();
+    //}
+
     public async Task<List<ConversationResponse>> GetConversationsAsync(
-        long userId,
-        CancellationToken cancellationToken = default)
+    long userId,
+    CancellationToken cancellationToken = default)
     {
         var conversations =
             await _chatRepository.GetConversationsAsync(
@@ -68,7 +82,7 @@ public class ChatService
                 cancellationToken);
 
         return conversations
-            .Select(MapConversation)
+            .Select(conversation => MapConversation(conversation, userId))
             .ToList();
     }
 
@@ -125,15 +139,43 @@ public class ChatService
         };
 
         await _chatRepository.AddMessageAsync(
-            message,
-            cancellationToken);
+     message,
+     cancellationToken);
 
         var response = MapMessage(message);
 
+        // Send message to users currently inside
+        // the conversation.
         await _chatGateway.MessageReceivedAsync(
             conversationId,
             response,
             cancellationToken);
+
+        // Get conversation participants.
+        var conversation =
+            await _chatRepository.GetConversationByIdAsync(
+                conversationId,
+                cancellationToken);
+
+        // Notify other participants about
+        // the new unread message.
+        if (conversation != null)
+        {
+            var recipientUserIds =
+                conversation.Participants
+                    .Select(x => x.UserId)
+                    .Where(x => x != userId)
+                    .Distinct()
+                    .ToList();
+
+            foreach (var recipientUserId in recipientUserIds)
+            {
+                await _chatGateway.UnreadMessageReceivedAsync(
+                    recipientUserId,
+                    response,
+                    cancellationToken);
+            }
+        }
 
         return response;
     }
@@ -170,6 +212,28 @@ public class ChatService
             throw new UnauthorizedAccessException(
                 "You are not a participant in this conversation.");
         }
+    }
+
+
+    private static ConversationResponse MapConversation(
+    Conversation conversation,
+    long currentUserId)
+    {
+        var unreadCount = conversation.Messages
+            .Count(x =>
+                !x.IsRead &&
+                x.SenderUserId != currentUserId);
+
+        return new ConversationResponse
+        {
+            Id = conversation.Id,
+            ConversationType = conversation.ConversationType,
+            CreatedAt = conversation.CreatedAt,
+            ParticipantUserIds = conversation.Participants
+                .Select(x => x.UserId)
+                .ToList(),
+            UnreadMessageCount = unreadCount
+        };
     }
 
     private static ConversationResponse MapConversation(
