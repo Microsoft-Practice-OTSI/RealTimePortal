@@ -1,0 +1,497 @@
+<div class="processes-page">
+
+  <!-- =====================================================
+       HEADER
+       ===================================================== -->
+
+  <div class="page-header">
+
+    <div class="title-area">
+
+      <div class="page-icon">
+        <mat-icon>
+          account_tree
+        </mat-icon>
+      </div>
+
+      <div>
+
+        <h1>
+          Processes
+        </h1>
+
+        <p>
+          Start and monitor real-time business processes.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <button
+      mat-stroked-button
+      class="refresh-button"
+      (click)="refresh()">
+
+      <mat-icon>
+        refresh
+      </mat-icon>
+
+      Refresh
+
+    </button>
+
+  </div>
+
+
+  <!-- =====================================================
+       ERROR
+       ===================================================== -->
+
+  @if (errorMessage()) {
+
+    <div class="error-banner">
+
+      <mat-icon>
+        error_outline
+      </mat-icon>
+
+      <span>
+        {{ errorMessage() }}
+      </span>
+
+    </div>
+
+  }
+
+
+  <!-- =====================================================
+       START PROCESS
+       ===================================================== -->
+
+  <section class="start-section">
+
+    <div class="section-header">
+
+      <div>
+
+        <h2>
+          Start a Process
+        </h2>
+
+        <p>
+          Select a process to begin a new workflow.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="process-definition-grid">
+
+      @for (
+        definition of processDefinitions;
+        track definition.processType
+      ) {
+
+        <div
+          class="process-definition-card"
+          [class]="definition.colorClass">
+
+
+          <div class="definition-top">
+
+            <div class="definition-icon">
+
+              <mat-icon>
+                {{ definition.icon }}
+              </mat-icon>
+
+            </div>
+
+            <span class="step-count">
+
+              {{ definition.steps.length }}
+              steps
+
+            </span>
+
+          </div>
+
+
+          <h3>
+            {{ definition.displayName }}
+          </h3>
+
+
+          <p>
+            {{ definition.description }}
+          </p>
+
+
+          <div class="definition-steps">
+
+            @for (
+              step of definition.steps;
+              track step
+            ) {
+
+              <span>
+                {{ step }}
+              </span>
+
+            }
+
+          </div>
+
+
+          <button
+            mat-flat-button
+            class="start-button"
+            [disabled]="isStarting()"
+            (click)="startProcess(definition)">
+
+            @if (isStarting()) {
+
+              <span class="button-content">
+
+                <mat-spinner
+                  diameter="18">
+                </mat-spinner>
+
+                <span>
+                  Starting...
+                </span>
+
+              </span>
+
+            } @else {
+
+              <span class="button-content">
+
+                <mat-icon>
+                  play_arrow
+                </mat-icon>
+
+                <span>
+                  Start {{ definition.displayName }}
+                </span>
+
+              </span>
+
+            }
+
+          </button>
+
+        </div>
+
+      }
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================================
+       PROCESS HISTORY
+       ===================================================== -->
+
+  <section class="history-section">
+
+    <div class="section-header">
+
+      <div>
+
+        <h2>
+          Process History
+        </h2>
+
+        <p>
+          View and monitor previously created processes.
+        </p>
+
+      </div>
+
+      <span class="process-count">
+
+        {{ filteredProcesses.length }}
+        processes
+
+      </span>
+
+    </div>
+
+
+    <!-- Filters -->
+
+    <div class="filter-bar">
+
+      <div class="search-box">
+
+        <mat-icon>
+          search
+        </mat-icon>
+
+        <input
+          type="text"
+          [(ngModel)]="searchText"
+          placeholder="Search by ID, process type or reference..." />
+
+      </div>
+
+
+      <select
+        [(ngModel)]="selectedProcessType"
+        class="filter-select">
+
+        <option value="">
+          All Process Types
+        </option>
+
+        @for (
+          definition of processDefinitions;
+          track definition.processType
+        ) {
+
+          <option
+            [value]="definition.processType">
+
+            {{ definition.displayName }}
+
+          </option>
+
+        }
+
+      </select>
+
+
+      <select
+        [(ngModel)]="selectedStatus"
+        class="filter-select">
+
+        <option value="">
+          All Statuses
+        </option>
+
+        <option value="Pending">
+          Pending
+        </option>
+
+        <option value="Running">
+          Running
+        </option>
+
+        <option value="Completed">
+          Completed
+        </option>
+
+        <option value="Failed">
+          Failed
+        </option>
+
+        <option value="Cancelled">
+          Cancelled
+        </option>
+
+      </select>
+
+
+      <button
+        mat-button
+        class="clear-button"
+        (click)="clearFilters()">
+
+        Clear
+
+      </button>
+
+    </div>
+
+
+    <!-- Loading -->
+
+    @if (isLoading()) {
+
+      <div class="loading-state">
+
+        <mat-spinner diameter="38"></mat-spinner>
+
+        <span>
+          Loading processes...
+        </span>
+
+      </div>
+
+    }
+
+
+    <!-- Table -->
+
+    @if (!isLoading()) {
+
+      @if (filteredProcesses.length > 0) {
+
+        <div class="table-container">
+
+          <table>
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  ID
+                </th>
+
+                <th>
+                  Process Type
+                </th>
+
+                <th>
+                  Reference
+                </th>
+
+                <th>
+                  Status
+                </th>
+
+                <th>
+                  Created
+                </th>
+
+                <th class="action-column">
+                  Action
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              @for (
+                process of filteredProcesses;
+                track process.id
+              ) {
+
+                <tr>
+
+                  <td>
+                    <span class="process-id">
+                      #{{ process.id }}
+                    </span>
+                  </td>
+
+
+                  <td>
+
+                    <div class="process-type-cell">
+
+                      <span class="table-process-icon">
+
+                        <mat-icon>
+                          account_tree
+                        </mat-icon>
+
+                      </span>
+
+                      <span>
+                        {{ getDisplayName(process.processType) }}
+                      </span>
+
+                    </div>
+
+                  </td>
+
+
+                  <td>
+
+                    <span class="reference">
+                      {{ process.referenceNumber }}
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    <span
+                      class="status-badge"
+                      [class]="getStatusClass(process.status)">
+
+                      <span class="status-dot"></span>
+
+                      {{ getStatusText(process.status) }}
+
+                    </span>
+
+                  </td>
+
+
+                  <td>
+
+                    <span class="created-date">
+
+                      {{ process.createdAt | date:'dd MMM yyyy, HH:mm' }}
+
+                    </span>
+
+                  </td>
+
+
+                  <td class="action-column">
+
+                    <button
+                      mat-icon-button
+                      class="view-button"
+                      title="View process"
+                      (click)="viewProcess(process.id)">
+
+                      <mat-icon>
+                        arrow_forward
+                      </mat-icon>
+
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      } @else {
+
+        <div class="empty-history">
+
+          <div class="empty-icon">
+            <mat-icon>
+              account_tree
+            </mat-icon>
+          </div>
+
+          <h3>
+            No processes found
+          </h3>
+
+          <p>
+            Try changing your filters or start a new process.
+          </p>
+
+        </div>
+
+      }
+
+    }
+
+  </section>
+
+</div>

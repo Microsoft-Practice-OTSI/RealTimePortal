@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>RealTimePortalUI</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap"
+    rel="stylesheet">
+
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet">
+
+<script>
+  (function () {
+    const themeKey = 'realTimePortalTheme';
+
+    console.log('==============================');
+    console.log('[Theme] index.html loaded');
+    console.log('[Theme] Current URL:', window.location.href);
+    console.log('[Theme] Current origin:', window.location.origin);
+    console.log('[Theme] Theme key:', themeKey);
+
+    try {
+      const savedTheme = localStorage.getItem(themeKey);
+
+      console.log('[Theme] localStorage value:', savedTheme);
+
+      const theme =
+        savedTheme === 'dark' ? 'dark' : 'light';
+
+      console.log('[Theme] Theme selected:', theme);
+
+      const html = document.documentElement;
+
+      console.log(
+        '[Theme] HTML class BEFORE:',
+        html.className
+      );
+
+      console.log(
+        '[Theme] HTML data-theme BEFORE:',
+        html.getAttribute('data-theme')
+      );
+
+      html.classList.remove(
+        'light-theme',
+        'dark-theme'
+      );
+
+      html.classList.add(
+        `${theme}-theme`
+      );
+
+      html.setAttribute(
+        'data-theme',
+        theme
+      );
+
+      html.style.colorScheme = theme;
+
+      console.log(
+        '[Theme] HTML class AFTER:',
+        html.className
+      );
+
+      console.log(
+        '[Theme] HTML data-theme AFTER:',
+        html.getAttribute('data-theme')
+      );
+
+      console.log(
+        '[Theme] colorScheme AFTER:',
+        html.style.colorScheme
+      );
+
+      console.log(
+        '[Theme] CSS --page-background:',
+        getComputedStyle(html)
+          .getPropertyValue('--page-background')
+      );
+
+      console.log(
+        '[Theme] CSS --card-background:',
+        getComputedStyle(html)
+          .getPropertyValue('--card-background')
+      );
+
+    } catch (error) {
+
+      console.error(
+        '[Theme] ERROR while applying theme:',
+        error
+      );
+
+      document.documentElement.classList.add(
+        'light-theme'
+      );
+
+      document.documentElement.setAttribute(
+        'data-theme',
+        'light'
+      );
+
+      document.documentElement.style.colorScheme =
+        'light';
+
+      console.log(
+        '[Theme] Fallback theme applied: light'
+      );
+    }
+
+    console.log('==============================');
+
+  })();
+</script>
+</head>
+
+<body>
+
+  <app-root></app-root>
+
+  <script>
+    window.addEventListener('load', function () {
+      console.log('==============================');
+      console.log('[Theme] WINDOW LOAD');
+
+      console.log(
+        '[Theme] HTML class:',
+        document.documentElement.className
+      );
+
+      console.log(
+        '[Theme] HTML data-theme:',
+        document.documentElement.getAttribute('data-theme')
+      );
+
+      console.log(
+        '[Theme] BODY class:',
+        document.body.className
+      );
+
+      console.log(
+        '[Theme] BODY data-theme:',
+        document.body.getAttribute('data-theme')
+      );
+
+      console.log(
+        '[Theme] --page-background:',
+        getComputedStyle(document.documentElement)
+          .getPropertyValue('--page-background')
+      );
+
+      console.log(
+        '[Theme] --card-background:',
+        getComputedStyle(document.documentElement)
+          .getPropertyValue('--card-background')
+      );
+
+      console.log('==============================');
+    });
+  </script>
+
+</body>
+</html>

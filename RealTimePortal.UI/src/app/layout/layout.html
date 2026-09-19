@@ -1,0 +1,458 @@
+<div
+  class="app-shell"
+  [class.sidebar-collapsed]="sidebarCollapsed()">
+
+  <!-- ======================================================
+       SIDEBAR
+       ====================================================== -->
+
+  <aside class="sidebar">
+
+    <!-- Brand -->
+
+    <div class="sidebar-brand">
+
+      <div class="brand-logo">
+        <mat-icon>hub</mat-icon>
+      </div>
+
+      @if (!sidebarCollapsed()) {
+
+        <div class="brand-text">
+
+          <div class="brand-name">
+            RealTime
+          </div>
+
+          <div class="brand-subtitle">
+            Portal
+          </div>
+
+        </div>
+
+      }
+
+
+      <!-- Hamburger -->
+
+      <button
+        mat-icon-button
+        class="sidebar-toggle"
+        (click)="toggleSidebar()"
+        [attr.aria-label]="
+          sidebarCollapsed()
+            ? 'Expand sidebar'
+            : 'Collapse sidebar'
+        ">
+
+        <mat-icon>
+          menu
+        </mat-icon>
+
+      </button>
+
+    </div>
+
+
+    <!-- Navigation -->
+
+    <nav class="navigation">
+
+      <div class="nav-section-title">
+
+        @if (!sidebarCollapsed()) {
+          WORKSPACE
+        }
+
+      </div>
+
+
+      <!-- Dashboard -->
+
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        class="nav-item">
+
+        <span class="nav-icon blue">
+          <mat-icon>
+            dashboard
+          </mat-icon>
+        </span>
+
+        @if (!sidebarCollapsed()) {
+
+          <span class="nav-label">
+            Dashboard
+          </span>
+
+        }
+
+      </a>
+
+
+      <!-- Processes -->
+
+      <a
+        routerLink="/processes"
+        routerLinkActive="active"
+        class="nav-item">
+
+        <span class="nav-icon purple">
+          <mat-icon>
+            account_tree
+          </mat-icon>
+        </span>
+
+        @if (!sidebarCollapsed()) {
+
+          <span class="nav-label">
+            Processes
+          </span>
+
+        }
+
+      </a>
+
+
+      <!-- Future pages -->
+
+      <div class="nav-section-title second-section">
+
+        @if (!sidebarCollapsed()) {
+          PLATFORM
+        }
+
+      </div>
+
+
+      <div class="nav-item disabled-nav">
+
+        <span class="nav-icon orange">
+          <mat-icon>
+            fact_check
+          </mat-icon>
+        </span>
+
+        @if (!sidebarCollapsed()) {
+
+          <span class="nav-label">
+            Approvals
+          </span>
+
+          <span class="coming-soon">
+            Soon
+          </span>
+
+        }
+
+      </div>
+
+
+      <div class="nav-item disabled-nav">
+
+        <span class="nav-icon pink">
+          <mat-icon>
+            notifications
+          </mat-icon>
+        </span>
+
+        @if (!sidebarCollapsed()) {
+
+          <span class="nav-label">
+            Notifications
+          </span>
+
+          <span class="coming-soon">
+            Soon
+          </span>
+
+        }
+
+      </div>
+
+
+      <div class="nav-item disabled-nav">
+
+        <span class="nav-icon cyan">
+          <mat-icon>
+            chat_bubble
+          </mat-icon>
+        </span>
+
+        @if (!sidebarCollapsed()) {
+
+          <span class="nav-label">
+            Chat
+          </span>
+
+          <span class="coming-soon">
+            Soon
+          </span>
+
+        }
+
+      </div>
+
+
+      <div class="nav-section-title second-section">
+
+        @if (!sidebarCollapsed()) {
+          ANALYTICS
+        }
+
+      </div>
+
+
+      <div class="nav-item disabled-nav">
+
+        <span class="nav-icon green">
+          <mat-icon>
+            analytics
+          </mat-icon>
+        </span>
+
+        @if (!sidebarCollapsed()) {
+
+          <span class="nav-label">
+            Metrics
+          </span>
+
+          <span class="coming-soon">
+            Soon
+          </span>
+
+        }
+
+      </div>
+
+
+      <div class="nav-section-title second-section">
+
+        @if (!sidebarCollapsed()) {
+          SYSTEM
+        }
+
+      </div>
+
+
+      <div class="nav-item disabled-nav">
+
+        <span class="nav-icon gray">
+          <mat-icon>
+            settings
+          </mat-icon>
+        </span>
+
+        @if (!sidebarCollapsed()) {
+
+          <span class="nav-label">
+            Settings
+          </span>
+
+          <span class="coming-soon">
+            Soon
+          </span>
+
+        }
+
+      </div>
+
+    </nav>
+
+
+    <!-- Sidebar bottom -->
+
+    <div class="sidebar-bottom">
+
+      <div class="connection-status">
+
+        <span class="connection-dot"></span>
+
+        @if (!sidebarCollapsed()) {
+
+          <div class="connection-details">
+
+            <strong>
+              System Online
+            </strong>
+
+            <small>
+              Real-time enabled
+            </small>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+  </aside>
+
+
+  <!-- ======================================================
+       MAIN
+       ====================================================== -->
+
+  <div class="main-area">
+
+
+    <!-- Header -->
+
+    <header class="top-header">
+
+      <div class="header-left">
+
+        <button
+          mat-icon-button
+          class="mobile-menu"
+          (click)="toggleSidebar()">
+
+          <mat-icon>
+            menu
+          </mat-icon>
+
+        </button>
+
+        <div class="breadcrumb">
+          RealTime Portal
+        </div>
+
+      </div>
+
+
+      <div class="header-right">
+
+
+        <!-- Live -->
+
+        <div class="header-live-status">
+
+          <span class="live-dot"></span>
+
+          <span>
+            Live
+          </span>
+
+        </div>
+
+
+        <!-- Notification -->
+
+        <button
+          mat-icon-button
+          class="header-button">
+
+          <mat-icon>
+            notifications_none
+          </mat-icon>
+
+          <span class="notification-dot"></span>
+
+        </button>
+
+
+        <!-- Theme -->
+
+        <button
+          mat-icon-button
+          class="header-button"
+          (click)="toggleTheme()"
+          [attr.aria-label]="
+            themeService.theme() === 'dark'
+              ? 'Switch to light theme'
+              : 'Switch to dark theme'
+          ">
+
+          <mat-icon>
+            {{
+              themeService.theme() === 'dark'
+                ? 'light_mode'
+                : 'dark_mode'
+            }}
+          </mat-icon>
+
+        </button>
+
+
+        <div class="header-divider"></div>
+
+
+        <!-- User -->
+
+        <div class="user-menu">
+
+          <div class="user-avatar">
+            {{ currentUserInitials }}
+          </div>
+
+          <div class="user-details">
+
+            <strong>
+              {{ currentUserName }}
+            </strong>
+
+            <span>
+              {{ currentUserRole }}
+            </span>
+
+          </div>
+
+          <button
+            mat-icon-button
+            class="user-arrow"
+            (click)="logout()">
+
+            <mat-icon>
+              logout
+            </mat-icon>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- Content -->
+
+    <main class="content-area">
+
+      <router-outlet></router-outlet>
+
+    </main>
+
+
+    <!-- Footer -->
+
+    <footer class="app-footer">
+
+      <div>
+        © 2026 RealTime Portal
+      </div>
+
+      <div class="footer-right">
+
+        <span>
+          Real-time workflow platform
+        </span>
+
+        <span class="footer-separator">
+          •
+        </span>
+
+        <span>
+          v1.0.0
+        </span>
+
+      </div>
+
+    </footer>
+
+  </div>
+
+</div>

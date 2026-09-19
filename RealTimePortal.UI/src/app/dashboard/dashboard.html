@@ -1,0 +1,808 @@
+<div class="dashboard-page">
+
+  <!-- =====================================================
+       PAGE HEADER
+       ===================================================== -->
+
+  <div class="page-header">
+
+    <div>
+
+      <div class="page-title-row">
+
+        <div class="page-title-icon">
+          <mat-icon>
+            dashboard
+          </mat-icon>
+        </div>
+
+        <div>
+
+          <h1>
+            Dashboard
+          </h1>
+
+          <p>
+            Monitor your real-time processes and workflow activity.
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="page-actions">
+
+      <div
+        class="connection-badge"
+        [class.disconnected]="!signalRConnected">
+
+        <span class="connection-indicator"></span>
+
+        <span>
+          {{
+            signalRConnected
+              ? 'Live'
+              : 'Offline'
+          }}
+        </span>
+
+      </div>
+
+
+      <div class="period-selector">
+
+        <button
+          mat-button
+          [class.selected]="selectedPeriod === 2"
+          (click)="changePeriod(2)">
+
+          Today
+
+        </button>
+
+        <button
+          mat-button
+          [class.selected]="selectedPeriod === 3"
+          (click)="changePeriod(3)">
+
+          7 Days
+
+        </button>
+
+        <button
+          mat-button
+          [class.selected]="selectedPeriod === 4"
+          (click)="changePeriod(4)">
+
+          30 Days
+
+        </button>
+
+        <button
+          mat-button
+          [class.selected]="selectedPeriod === 1"
+          (click)="changePeriod(1)">
+
+          All Time
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =====================================================
+       LOADING
+       ===================================================== -->
+
+  @if (isLoading()) {
+
+    <div class="loading-state">
+
+      <mat-spinner diameter="42"></mat-spinner>
+
+      <span>
+        Loading dashboard...
+      </span>
+
+    </div>
+
+  }
+
+
+  <!-- =====================================================
+       ERROR
+       ===================================================== -->
+
+  @if (!isLoading() && errorMessage()) {
+
+    <div class="error-state">
+
+      <mat-icon>
+        error_outline
+      </mat-icon>
+
+      <span>
+        {{ errorMessage() }}
+      </span>
+
+      <button
+        mat-stroked-button
+        (click)="loadDashboard()">
+
+        Try Again
+
+      </button>
+
+    </div>
+
+  }
+
+
+  @if (!isLoading() && !errorMessage()) {
+
+
+    <!-- ===================================================
+         OVERALL SUMMARY
+         =================================================== -->
+
+    @if (summary) {
+
+      <section class="overall-summary">
+
+        <div class="section-heading">
+
+          <div>
+
+            <h2>
+              Overall Activity
+            </h2>
+
+            <p>
+              All process types combined
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="summary-grid">
+
+
+          <!-- Total -->
+
+          <div class="summary-card total">
+
+            <div class="summary-icon">
+              <mat-icon>
+                layers
+              </mat-icon>
+            </div>
+
+            <div class="summary-content">
+
+              <span>
+                Total
+              </span>
+
+              <strong>
+                {{ summary.total }}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <!-- Pending -->
+
+          <div class="summary-card pending">
+
+            <div class="summary-icon">
+              <mat-icon>
+                schedule
+              </mat-icon>
+            </div>
+
+            <div class="summary-content">
+
+              <span>
+                Pending
+              </span>
+
+              <strong>
+                {{ summary.pending }}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <!-- Running -->
+
+          <div class="summary-card running">
+
+            <div class="summary-icon">
+              <mat-icon>
+                sync
+              </mat-icon>
+            </div>
+
+            <div class="summary-content">
+
+              <span>
+                Running
+              </span>
+
+              <strong>
+                {{ summary.running }}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <!-- Completed -->
+
+          <div class="summary-card completed">
+
+            <div class="summary-icon">
+              <mat-icon>
+                check_circle
+              </mat-icon>
+            </div>
+
+            <div class="summary-content">
+
+              <span>
+                Completed
+              </span>
+
+              <strong>
+                {{ summary.completed }}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <!-- Failed -->
+
+          <div class="summary-card failed">
+
+            <div class="summary-icon">
+              <mat-icon>
+                error
+              </mat-icon>
+            </div>
+
+            <div class="summary-content">
+
+              <span>
+                Failed
+              </span>
+
+              <strong>
+                {{ summary.failed }}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <!-- Cancelled -->
+
+          <div class="summary-card cancelled">
+
+            <div class="summary-icon">
+              <mat-icon>
+                block
+              </mat-icon>
+            </div>
+
+            <div class="summary-content">
+
+              <span>
+                Cancelled
+              </span>
+
+              <strong>
+                {{ summary.cancelled }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    }
+
+
+    <!-- ===================================================
+         PROCESS TYPE DASHBOARDS
+         =================================================== -->
+
+    @for (
+      item of processTypes;
+      track item.summary.processType
+    ) {
+
+      <section class="process-dashboard-section">
+
+
+        <!-- Process type heading -->
+
+        <div class="process-section-heading">
+
+          <div class="process-title">
+
+            <div class="process-title-icon">
+              <mat-icon>
+                account_tree
+              </mat-icon>
+            </div>
+
+            <div>
+
+              <h2>
+                {{ getProcessDisplayName(item.summary.processType) }}
+              </h2>
+
+              <p>
+                Process status and activity
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Six status cards -->
+
+        <div class="status-grid">
+
+
+          <div class="status-card total">
+
+            <span class="status-card-label">
+              Total
+            </span>
+
+            <strong>
+              {{ item.summary.total }}
+            </strong>
+
+            <mat-icon>
+              layers
+            </mat-icon>
+
+          </div>
+
+
+          <div class="status-card pending">
+
+            <span class="status-card-label">
+              Pending
+            </span>
+
+            <strong>
+              {{ item.summary.pending }}
+            </strong>
+
+            <mat-icon>
+              schedule
+            </mat-icon>
+
+          </div>
+
+
+          <div class="status-card running">
+
+            <span class="status-card-label">
+              Running
+            </span>
+
+            <strong>
+              {{ item.summary.running }}
+            </strong>
+
+            <mat-icon>
+              sync
+            </mat-icon>
+
+          </div>
+
+
+          <div class="status-card completed">
+
+            <span class="status-card-label">
+              Completed
+            </span>
+
+            <strong>
+              {{ item.summary.completed }}
+            </strong>
+
+            <mat-icon>
+              check_circle
+            </mat-icon>
+
+          </div>
+
+
+          <div class="status-card failed">
+
+            <span class="status-card-label">
+              Failed
+            </span>
+
+            <strong>
+              {{ item.summary.failed }}
+            </strong>
+
+            <mat-icon>
+              error
+            </mat-icon>
+
+          </div>
+
+
+          <div class="status-card cancelled">
+
+            <span class="status-card-label">
+              Cancelled
+            </span>
+
+            <strong>
+              {{ item.summary.cancelled }}
+            </strong>
+
+            <mat-icon>
+              block
+            </mat-icon>
+
+          </div>
+
+        </div>
+
+
+        <!-- Trend -->
+
+        <div class="trend-card">
+
+          <div class="trend-header">
+
+            <div>
+
+              <h3>
+                {{ getProcessDisplayName(item.summary.processType) }}
+                Trend
+              </h3>
+
+              <span>
+                Created processes over the selected period
+              </span>
+
+            </div>
+
+          </div>
+
+
+          @if (item.trend.length > 0) {
+
+            <div class="chart-container">
+
+              <canvas
+                baseChart
+                [data]="item.chartData"
+                [options]="{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  interaction: {
+                    mode: 'index',
+                    intersect: false
+                  },
+                  plugins: {
+                    legend: {
+                      display: true,
+                      position: 'top'
+                    }
+                  },
+                  scales: {
+                    x: {
+                      ticks: {
+                        maxRotation: 0
+                      }
+                    },
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        precision: 0
+                      }
+                    }
+                  }
+                }"
+                type="line">
+              </canvas>
+
+            </div>
+
+          } @else {
+
+            <div class="empty-chart">
+
+              <mat-icon>
+                show_chart
+              </mat-icon>
+
+              <span>
+                No activity for this period.
+              </span>
+
+            </div>
+
+          }
+
+        </div>
+
+      </section>
+
+    }
+
+
+    <!-- ===================================================
+         RECENT / RUNNING / FAILED
+         =================================================== -->
+
+    <section class="activity-grid">
+
+
+      <!-- Recent -->
+
+      <div class="activity-card">
+
+        <div class="activity-card-header">
+
+          <div>
+
+            <h3>
+              Recent Processes
+            </h3>
+
+            <span>
+              Latest activity
+            </span>
+
+          </div>
+
+          <mat-icon>
+            history
+          </mat-icon>
+
+        </div>
+
+
+        @if (recentProcesses.length > 0) {
+
+          <div class="activity-list">
+
+            @for (
+              process of recentProcesses;
+              track process.id
+            ) {
+
+              <div class="activity-row">
+
+                <div class="activity-process-icon">
+                  <mat-icon>
+                    account_tree
+                  </mat-icon>
+                </div>
+
+             <div class="activity-process">
+                <strong>{{ process.processType }}</strong>
+
+                <span>
+                  {{ process.referenceNumber }}
+                </span>
+
+                <small>
+                  {{ process.createdAt | date:'dd MMM yyyy, hh:mm a' }}
+                </small>
+              </div>
+
+                <span
+                  class="activity-status"
+                  [class]="getStatusClass(process.status)">
+
+                  {{ getStatusText(process.status) }}
+
+                </span>
+
+              </div>
+
+            }
+
+          </div>
+
+        } @else {
+
+          <div class="empty-state">
+            No recent processes.
+          </div>
+
+        }
+
+      </div>
+
+
+      <!-- Running -->
+
+      <div class="activity-card">
+
+        <div class="activity-card-header">
+
+          <div>
+
+            <h3>
+              Running Processes
+            </h3>
+
+            <span>
+              Currently in progress
+            </span>
+
+          </div>
+
+          <mat-icon>
+            sync
+          </mat-icon>
+
+        </div>
+
+
+        @if (runningProcesses.length > 0) {
+
+          <div class="activity-list">
+
+            @for (
+              process of runningProcesses;
+              track process.id
+            ) {
+
+              <div class="activity-row">
+
+                <div class="activity-process-icon running-icon">
+                  <mat-icon>
+                    play_arrow
+                  </mat-icon>
+                </div>
+
+                <div class="activity-process">
+
+                  <strong>
+                    {{ getProcessDisplayName(process.processType) }}
+                  </strong>
+
+                  <span>
+                    {{ process.referenceNumber }}
+                  </span>
+
+                </div>
+
+                <span class="activity-status running">
+                  Running
+                </span>
+
+              </div>
+
+            }
+
+          </div>
+
+        } @else {
+
+          <div class="empty-state">
+            No running processes.
+          </div>
+
+        }
+
+      </div>
+
+
+      <!-- Failed -->
+
+      <div class="activity-card">
+
+        <div class="activity-card-header">
+
+          <div>
+
+            <h3>
+              Failed Processes
+            </h3>
+
+            <span>
+              Requires attention
+            </span>
+
+          </div>
+
+          <mat-icon>
+            warning
+          </mat-icon>
+
+        </div>
+
+
+        @if (failedProcesses.length > 0) {
+
+          <div class="activity-list">
+
+            @for (
+              process of failedProcesses;
+              track process.id
+            ) {
+
+              <div class="activity-row">
+
+                <div class="activity-process-icon failed-icon">
+                  <mat-icon>
+                    error
+                  </mat-icon>
+                </div>
+
+                <div class="activity-process">
+
+                  <strong>
+                    {{ getProcessDisplayName(process.processType) }}
+                  </strong>
+
+                  <span>
+                    {{ process.referenceNumber }}
+                  </span>
+
+                </div>
+
+                <span class="activity-status failed">
+                  Failed
+                </span>
+
+              </div>
+
+            }
+
+          </div>
+
+        } @else {
+
+          <div class="empty-state">
+            No failed processes.
+          </div>
+
+        }
+
+      </div>
+
+    </section>
+
+  }
+
+</div>

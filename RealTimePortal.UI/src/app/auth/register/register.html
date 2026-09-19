@@ -1,0 +1,226 @@
+
+
+<div class="register-page">
+
+  <div class="register-background">
+
+    <div class="register-content">
+
+      <!-- Left side -->
+      <div class="register-info">
+
+        <div class="portal-logo">
+          RTP
+        </div>
+
+        <h1>Join RealTime Portal</h1>
+
+        <h2>
+          Connect, monitor and collaborate in real time
+        </h2>
+
+        <p>
+          Create your account to access real-time process
+          monitoring, progress tracking, notifications and
+          team collaboration.
+        </p>
+
+        <div class="feature-list">
+
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span>Monitor business processes</span>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span>Track real-time progress</span>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span>Collaborate with your team</span>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Registration card -->
+      <mat-card class="register-card">
+
+        <mat-card-header>
+
+          <mat-card-title>
+            Create Account
+          </mat-card-title>
+
+          <mat-card-subtitle>
+            Register for RealTime Portal
+          </mat-card-subtitle>
+
+        </mat-card-header>
+
+        <mat-card-content>
+
+          <form
+            [formGroup]="registerForm"
+            (ngSubmit)="onRegister()"
+            autocomplete="off">
+
+            <div class="name-row">
+
+              <mat-form-field
+                appearance="outline">
+
+                <mat-label>First Name</mat-label>
+
+                <input
+                  matInput
+                  type="text"
+                  formControlName="firstName"
+                  autocomplete="given-name">
+
+              </mat-form-field>
+
+
+              <mat-form-field
+                appearance="outline">
+
+                <mat-label>Last Name</mat-label>
+
+                <input
+                  matInput
+                  type="text"
+                  formControlName="lastName"
+                  autocomplete="family-name">
+
+              </mat-form-field>
+
+            </div>
+
+
+            <mat-form-field
+              appearance="outline"
+              class="full-width">
+
+              <mat-label>Username</mat-label>
+
+              <input
+                matInput
+                type="text"
+                formControlName="userName"
+                autocomplete="username">
+
+            </mat-form-field>
+
+
+            <mat-form-field
+              appearance="outline"
+              class="full-width">
+
+              <mat-label>Email Address</mat-label>
+
+              <input
+                matInput
+                type="email"
+                formControlName="email"
+                autocomplete="email">
+
+            </mat-form-field>
+
+
+            <mat-form-field
+              appearance="outline"
+              class="full-width">
+
+              <mat-label>Password</mat-label>
+
+              <input
+                matInput
+                type="password"
+                formControlName="password"
+                autocomplete="new-password">
+
+            </mat-form-field>
+
+
+            <mat-form-field
+              appearance="outline"
+              class="full-width">
+
+              <mat-label>Confirm Password</mat-label>
+
+              <input
+                matInput
+                type="password"
+                formControlName="confirmPassword"
+                autocomplete="new-password">
+
+            </mat-form-field>
+
+
+            @if (errorMessage) {
+
+              <div class="error-message">
+                {{ errorMessage }}
+              </div>
+
+            }
+
+
+            @if (successMessage) {
+
+              <div class="success-message">
+                {{ successMessage }}
+              </div>
+
+            }
+
+
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              class="register-button"
+              [disabled]="isLoading">
+
+              @if (isLoading) {
+                Creating Account...
+              }
+              @else {
+                Create Account
+              }
+
+            </button>
+
+          </form>
+
+
+          <div class="login-section">
+
+            <span>
+              Already have an account?
+            </span>
+
+            <button
+              type="button"
+              class="login-link"
+              (click)="goToLogin()">
+
+              Login
+
+            </button>
+
+          </div>
+
+        </mat-card-content>
+
+      </mat-card>
+
+    </div>
+
+  </div>
+
+</div>

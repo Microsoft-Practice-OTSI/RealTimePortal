@@ -1,0 +1,435 @@
+<div class="process-detail-container" >
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading process...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (!isLoading() && errorMessage()) {
+    <div class="error-container">
+      <mat-icon>error</mat-icon>
+      <p>{{ errorMessage() }}</p>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="loadProcess()">
+        Retry
+      </button>
+    </div>
+  }
+
+  <!-- Process Details -->
+  @if (!isLoading() && process(); as currentProcess) {
+
+    <!-- Header -->
+    <div class="page-header">
+
+      <div class="header-left">
+
+        <button
+          mat-icon-button
+          (click)="goBack()"
+          matTooltip="Back">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+
+        <div class="header-title">
+
+          <h1>
+            {{ getDisplayName(currentProcess.processType) }}
+          </h1>
+
+          <div class="reference-number">
+            {{ currentProcess.referenceNumber }}
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="header-actions">
+
+        <!-- SignalR Status -->
+        <!-- <div
+          class="signal-status"
+          [class.offline]="!signalRConnected()">
+
+          <span class="status-dot"></span>
+
+          <span>
+            {{ signalRConnected() ? 'Live updates' : 'Offline' }}
+          </span>
+
+        </div> -->
+
+        <!-- Cancel -->
+        @if (getStatusText(currentProcess.status) === 'Running') {
+
+          <!-- <button
+            mat-stroked-button
+            color="warn"
+            [disabled]="isCancelling()"
+            (click)="cancelProcess()">
+
+            @if (isCancelling()) {
+              <mat-spinner diameter="18"></mat-spinner>
+            } @else {
+              <mat-icon>cancel</mat-icon>
+            }
+
+            Cancel
+
+          </button> -->
+
+        }
+
+        <!-- Start -->
+        @if (getStatusText(currentProcess.status) === 'Pending') {
+
+          <button
+            mat-raised-button
+            color="primary"
+            [disabled]="isStarting()"
+            (click)="startProcess()">
+
+            @if (isStarting()) {
+              <mat-spinner diameter="18"></mat-spinner>
+            } @else {
+              <mat-icon>play_arrow</mat-icon>
+            }
+
+            Start
+
+          </button>
+
+        }
+
+      </div>
+
+    </div>
+
+
+    <!-- Process Summary -->
+    <div class="summary-card"  style="margin-left: 60px;">
+
+      <div class="summary-item">
+
+        <span class="summary-label">
+          Process Type: 
+        </span>
+
+        <span class="summary-value">
+          {{ getDisplayName(currentProcess.processType) }}
+        </span>
+
+      </div>
+
+
+      <div class="summary-item">
+
+        <span class="summary-label">
+          Reference Number:
+        </span>
+
+        <span class="summary-value">
+          {{ currentProcess.referenceNumber }}
+        </span>
+
+      </div>
+
+
+      <!-- <div class="summary-item">
+
+        <span class="summary-label">
+          Client
+        </span>
+
+        <span class="summary-value">
+          {{ currentProcess.clientId }}
+        </span>
+
+      </div>
+
+
+      <div class="summary-item">
+
+        <span class="summary-label">
+          Application
+        </span>
+
+        <span class="summary-value">
+          {{ currentProcess.applicationId }}
+        </span>
+
+      </div> -->
+
+
+      <div class="summary-item">
+
+        <span class="summary-label">
+          Status :  
+        </span>
+
+        <span
+          class="status-badge"
+          [class]="getStatusClass(currentProcess.status)">
+
+          {{ getStatusText(currentProcess.status) }}
+
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- Overall Progress -->
+    <!-- Overall Progress -->
+<div class="progress-card" style="margin-left: 60px;">
+
+  <div class="progress-header">
+
+    <div>
+      <h4>
+         {{ overallProgress() === 100 ? 'Completed' : 'Processing....' }}
+      </h4>
+
+      <p class="progress-message">
+        {{ getProgressMessage() }}
+      </p>
+    </div>
+
+  </div>
+
+  <!-- Overall Progress Bar -->
+  <div class="overall-progress-track">
+
+    <div
+      class="overall-progress-fill"
+      [style.width.%]="overallProgress()">
+    </div>
+
+    <span class="overall-progress-value">
+      {{ overallProgress() }}%
+    </span>
+
+  </div>
+
+  <div class="progress-footer">
+
+    <span>
+      {{ completedStepCount }}
+      of
+      {{ currentProcess.steps.length }}
+      steps completed
+    </span>
+
+  </div>
+
+</div>
+
+
+    <!-- Steps -->
+    <div class="steps-card" style="margin-top: 30px; margin-left: 60px;">
+
+      <div class="section-header">
+
+        <div>
+
+          <h2>
+            Process Steps
+          </h2>
+
+          <p>
+            Track the progress of each step in real time.
+          </p>
+
+        </div>
+
+      </div>
+
+
+     <div class="steps-section">
+
+  <h3>Steps</h3>
+
+  <div class="steps-list">
+
+    @for (step of currentProcess.steps; track step.id) {
+
+      <div class="step-row">
+
+        <div class="step-info">
+
+          <span class="step-name">
+            {{ step.stepName }}
+          </span>
+
+          <span
+            class="step-status"
+            [class]="getStepStatusClass(step.status)">
+            {{ getStepStatusText(step.status) }}
+          </span>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+</div>
+
+    </div>
+
+
+    <!-- Process Information -->
+    <div class="information-card" style="margin-left: 60px;">
+
+      <div class="section-header">
+
+        <div>
+
+          <h2>
+            Process Information
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="information-grid" style="margin-left: 60px;">
+
+        <div class="information-item">
+
+          <span class="information-label">
+            Execution ID
+          </span>
+
+          <span class="information-value execution-id">
+            {{ currentProcess.executionId }}
+          </span>
+
+        </div>
+
+
+        <div class="information-item">
+
+          <span class="information-label">
+            Created
+          </span>
+
+          <span class="information-value">
+            {{ currentProcess.createdAt | date:'dd MMM yyyy, HH:mm:ss' }}
+          </span>
+
+        </div>
+
+
+        @if (currentProcess.createdBy) {
+
+          <div class="information-item">
+
+            <span class="information-label">
+              Created By
+            </span>
+
+            <span class="information-value">
+              {{ currentProcess.createdBy }}
+            </span>
+
+          </div>
+
+        }
+
+
+        @if (currentProcess.startedAt) {
+
+          <div class="information-item">
+
+            <span class="information-label">
+              Started
+            </span>
+
+            <span class="information-value">
+              {{ currentProcess.startedAt | date:'dd MMM yyyy, HH:mm:ss' }}
+            </span>
+
+          </div>
+
+        }
+
+
+        @if (currentProcess.completedAt) {
+
+          <div class="information-item">
+
+            <span class="information-label">
+              Completed
+            </span>
+
+            <span class="information-value">
+              {{ currentProcess.completedAt | date:'dd MMM yyyy, HH:mm:ss' }}
+            </span>
+
+          </div>
+
+        }
+
+
+        @if (currentProcess.modifiedAt) {
+
+          <div class="information-item">
+
+            <span class="information-label">
+              Modified
+            </span>
+
+            <span class="information-value">
+              {{ currentProcess.modifiedAt | date:'dd MMM yyyy, HH:mm:ss' }}
+            </span>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+
+    <!-- Process Error -->
+    @if (currentProcess.errorMessage) {
+
+      <div class="process-error-card">
+
+        <mat-icon>
+          error
+        </mat-icon>
+
+        <div>
+
+          <h3>
+            Process Error
+          </h3>
+
+          <p>
+            {{ currentProcess.errorMessage }}
+          </p>
+
+        </div>
+
+      </div>
+
+    }
+
+  }
+
+</div>

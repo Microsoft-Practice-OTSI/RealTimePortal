@@ -1,0 +1,149 @@
+<div class="login-container">
+
+  <div class="login-background">
+
+    <div class="login-content">
+
+      <!-- Left side -->
+      <div class="portal-info">
+
+        <!-- <div class="portal-logo">
+          RTP
+        </div> -->
+
+        <h1>RealTime Portal</h1>
+
+        <h2>
+          Real-time visibility for your business processes
+        </h2>
+
+        <p>
+          Monitor processes, track progress, receive
+          real-time notifications, and collaborate with
+          your team from one place.
+        </p>
+
+        <div class="feature-list">
+
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span>Real-time process monitoring</span>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span>Live progress updates</span>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span>Real-time team communication</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Right side -->
+      <mat-card class="login-card">
+
+        <mat-card-header>
+
+          <mat-card-title>
+            Welcome Back
+          </mat-card-title>
+
+          <mat-card-subtitle>
+            Sign in to continue to RealTime Portal
+          </mat-card-subtitle>
+
+        </mat-card-header>
+
+        <mat-card-content>
+
+          <form (ngSubmit)="login()">
+
+            <mat-form-field
+              appearance="outline"
+              class="full-width">
+
+              <mat-label>Username</mat-label>
+
+              <input
+                matInput
+                type="text"
+                name="username"
+                [(ngModel)]="userName"
+                required
+                autocomplete="username">
+
+            </mat-form-field>
+
+            <mat-form-field
+              appearance="outline"
+              class="full-width">
+
+              <mat-label>Password</mat-label>
+
+              <input
+                matInput
+                type="password"
+                name="password"
+                [(ngModel)]="password"
+                required
+                autocomplete="current-password">
+
+            </mat-form-field>
+
+            @if (errorMessage) {
+
+              <div class="error-message">
+                {{ errorMessage }}
+              </div>
+
+            }
+
+            <button
+              mat-raised-button
+              color="primary"
+              type="submit"
+              class="login-button"
+              [disabled]="isLoading">
+
+              @if (isLoading) {
+                Logging In...
+              }
+              @else {
+                Login
+              }
+
+            </button>
+
+          </form>
+
+          <div class="register-section">
+
+            <span>
+              Don't have an account?
+            </span>
+
+            <button
+              type="button"
+              class="register-link"
+              (click)="goToRegister()">
+
+              Create Account
+
+            </button>
+
+          </div>
+
+        </mat-card-content>
+
+      </mat-card>
+
+    </div>
+
+  </div>
+
+</div>

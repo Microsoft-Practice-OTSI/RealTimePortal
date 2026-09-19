@@ -1,0 +1,6 @@
+@RealTimePortal.API_HostAddress = http://localhost:5155
+
+GET {{RealTimePortal.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
