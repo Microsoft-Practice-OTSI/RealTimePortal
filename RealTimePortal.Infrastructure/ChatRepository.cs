@@ -30,12 +30,20 @@ public class ChatRepository : IChatRepository
         long userId,
         CancellationToken cancellationToken = default)
     {
+        //return await _dbContext.Conversations
+        //    .AsNoTracking()
+        //    .Include(x => x.Participants)
+        //    .Where(x => x.Participants.Any(p => p.UserId == userId))
+        //    .OrderByDescending(x => x.CreatedAt)
+        //    .ToListAsync(cancellationToken);
+
         return await _dbContext.Conversations
-            .AsNoTracking()
-            .Include(x => x.Participants)
-            .Where(x => x.Participants.Any(p => p.UserId == userId))
-            .OrderByDescending(x => x.CreatedAt)
-            .ToListAsync(cancellationToken);
+           .AsNoTracking()
+           .Include(x => x.Participants)
+           .Include(x => x.Messages)
+           .Where(x => x.Participants.Any(p => p.UserId == userId))
+           .OrderByDescending(x => x.CreatedAt)
+           .ToListAsync(cancellationToken);
     }
 
     public async Task<bool> IsParticipantAsync(
@@ -61,6 +69,16 @@ public class ChatRepository : IChatRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<Conversation?> GetConversationByIdAsync(
+    long conversationId,
+    CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Conversations
+            .Include(x => x.Participants)
+            .FirstOrDefaultAsync(
+                x => x.Id == conversationId,
+                cancellationToken);
+    }
     public async Task<ChatMessage> AddMessageAsync(
         ChatMessage message,
         CancellationToken cancellationToken = default)

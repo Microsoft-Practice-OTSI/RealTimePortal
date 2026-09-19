@@ -16,6 +16,12 @@ public class RealTimeHub : Hub
 
     public override async Task OnConnectedAsync()
     {
+        var userId = GetUserId();
+
+        await Groups.AddToGroupAsync(
+            Context.ConnectionId,
+            $"user-{userId}");
+
         await base.OnConnectedAsync();
     }
 

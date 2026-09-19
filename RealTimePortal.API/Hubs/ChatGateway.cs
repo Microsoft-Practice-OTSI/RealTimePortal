@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using RealTimePortal.Application;
+using RealTimePortal.Application.Responses;
 
 namespace RealTimePortal.API.Hubs;
 
@@ -14,13 +15,27 @@ public class ChatGateway : IChatGateway
 
     public Task MessageReceivedAsync(
         long conversationId,
-        object message,
+        ChatMessageResponse message,
         CancellationToken cancellationToken = default)
     {
         return _hubContext.Clients
             .Group($"conversation-{conversationId}")
             .SendAsync(
                 "chatMessageReceived",
+                message,
+                cancellationToken);
+    }
+
+
+    public async Task UnreadMessageReceivedAsync(
+    long userId,
+    ChatMessageResponse message,
+    CancellationToken cancellationToken = default)
+    {
+        await _hubContext.Clients
+            .Group($"user-{userId}")
+            .SendAsync(
+                "chatUnreadMessageReceived",
                 message,
                 cancellationToken);
     }
